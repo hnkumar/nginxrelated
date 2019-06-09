@@ -1,0 +1,26 @@
+#!/bin/bash
+client=$1
+project=$2
+NGINXTEMPLATE="/etc/nginx/sites-available/template"
+NGINXSITES="/etc/nginx/sites-available"
+NGINXSITEE="/etc/nginx/sites-enable"
+if [ "$1" == "" ]; then
+read -p "Enter Client Name: " client
+fi
+if [ "$2" == "" ]; then
+read -p "Enter Project Name: " project
+fi
+echo "You have selected $client as client and $project as project name"
+read -p "Is it right (Y) (any key abort): " siteconfirm
+case "$siteconfirm" in
+	[yY][eE][sS]|[yY])
+		cp "$NGINXTEMPLATE" "$NGINXSITES/$project"
+		sed -i "s/PROJECT/$project/g" "$NGINXSITES/$project"
+		sed -i "s/CLIENT/$client/g" "$NGINXSITES/$project"
+		ln -s "$NGINXSITES/$project" "$NGINXSITEE/$project"
+		echo "Please check nginx -t command then you can reload nginx"
+		;;
+	*)
+		echo "Try again the same command"
+		;;
+esac
